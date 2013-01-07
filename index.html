@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Fine Art Photography by Josh Levine Photography</title>
+		<style type="text/css">
+		body, html {
+			padding:0;
+			margin:0;
+		}
+		
+		body {
+			height:100%;
+			overflow:hidden;
+			font-family:Helvetica, Arial, Verdana;
+		}
+		
+		/* !Top Panel */
+		
+		#top-panel {
+			height:204px;
+			background:#111;
+			overflow:hidden;
+			-webkit-transition: all ease .3s;
+			-moz-transition: all ease .3s;
+			-o-transition: all ease .3s;
+			transition: all ease .3s;
+			padding-bottom:10px;	
+		}
+		
+		
+		#top-panel.hidden {
+			height:0px;
+		}
+		
+		h1 {
+			margin:5px 0 5px 15px;
+			padding:0;
+			color:#fff;
+		}		
+		
+		#nav {
+			color:#fff;
+			padding:5px 0 0 15px;
+			font-size:90%;
+		}
+		
+		#nav a {
+			text-decoration:none;
+			color:#ff0000;
+		}
+		
+		#images {
+			padding:0 15px 15px 0;
+			overflow-x:scroll;
+			overflow-y:hidden;
+		}
+		
+		#images ul {
+			list-style:none;
+			margin:15px 0 0 15px;
+			padding:0;
+			height:100px;
+			width:0px;
+			overflow-x:auto;
+			overflow-y:hidden;
+		}
+		
+		#images ul li {
+			height:100px;
+			float:left;
+		}
+		
+		img.thumbnail {
+			max-height:100px;
+			min-height:100px;
+		}
+		
+		a.big_link {
+			display:block;
+		}
+		
+		#top-panel #arrow {
+			position:absolute;
+			top:204px;
+			margin:0 auto;
+			transition: all ease .3s;
+			-webkit-transition: all ease .3s;
+			-moz-transition: all ease .3s;
+			-o-transition: all ease .3s;
+			left:50%;
+			margin-left:-10px;
+			z-index:1000;
+		}
+		
+		#top-panel.hidden #arrow {
+			top:0px;
+			transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+			-moz-transform:rotate(180deg);
+			-o-transform:rotate(180deg);
+		}
+		
+		#bottom-panel {
+			background:url(cf2.jpg);
+			-moz-box-shadow: inset 0px 10px 10px 0px rgba(10, 10, 10, .75);
+			-webkit-box-shadow: inset 0px 10px 10px 0px rgba(10, 10, 10, .75);
+			box-shadow: inset 0px 10px 10px 0px rgba(10, 10, 10, .75);
+			position:relative;
+		}
+		
+		#init {
+			background:url('black-transparency-.3.png');
+			width:640px;
+			color:#ffffff;
+			text-align:center;
+			/* padding:10px; */
+			border-radius:10px;
+			/* margin:30px auto; */
+			margin:0 auto;
+			padding:10px;
+			position:relative;
+			top:15px;
+		}
+		
+		#bottom-panel #image {
+			text-align:center;
+			position:relative;
+			top:15px;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="top-panel">
+			<h1>Photography by Josh Levine</h1>
+			<div id="nav">
+				Portfolio: <a href="http://www.500px.com/jlevine">500px</a> | <a href="http://www.flickr.com/photos/jlevine22/">Flickr</a>
+			</div>
+			<div id="images"><ul></ul></div>
+			<div class="clear:both;"></div>
+			<img src="arrow.png" width="20" height="20" alt="up/down" id="arrow" />
+		</div>
+		<div id="bottom-panel" class="fullscreen">
+			<div id="init">
+				<img src="start.png" width="645" height="40" alt="Start by clicking on a thumbnail" />
+				<p>
+					You can also navigate through the images using the Left and Right keys.
+				</p>
+			</div>
+		</div>
+		<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+		<script src="jgestures.min.js"></script>
+		<script src="jflickrfeed.min.js"></script>
+		<script src="jquery.mousestop.js"></script>
+		<script type="text/javascript">
+			function resizeBottomPanel() {
+				var height = $(window).height();
+				var width = $(window).width();
+				$('#bottom-panel').css('height', height + 'px');
+				$('#image > img').css('max-width', (width - 30) + 'px').css('max-height', (height - 30) + 'px');
+			}
+
+			var ulWidth = 0;
+			function thumbOnLoad(ref) {
+				var img = $(ref);
+				var ul = $('#images > ul');
+				ulWidth += img.width() + 1;
+				ul.css('width', ulWidth + 'px');
+			}
+			
+			jQuery(function(){
+				resizeBottomPanel();
+				
+				$(window).bind('resize', function(){
+					resizeBottomPanel();
+				});
+				$(document).bind('keyup', function(e){
+					console.log(e.keyCode);
+					// Left Arrow
+					if (e.keyCode == 37) {
+						var selected = $('a.big_link.selected');		
+						if (selected.length == 1) {
+							var selectedIndex = $('a.big_link').index(selected);
+							console.log(selectedIndex);
+							if (selectedIndex == 0) {
+								$('a.big_link').last().click();
+							}
+							else {
+								$('a.big_link:eq(' + (selectedIndex - 1) + ')').click();
+							}
+						}
+						else {
+							$('a.big_link').last().click();
+						}
+					}
+					// Right Arrow
+					else if (e.keyCode == 39) {
+						var selected = $('a.big_link.selected');		
+						if (selected.length == 1) {
+							var selectedIndex = $('a.big_link').index(selected);
+							console.log(selectedIndex);
+							if (selectedIndex == $('a.big_link').length-1) {
+								$('a.big_link').first().click();
+							}
+							else {
+								$('a.big_link:eq(' + (selectedIndex + 1) + ')').click();
+							}
+						}
+						else {
+							$('a.big_link').first().click();
+						}
+					}
+				});
+
+				var mouse = {};
+				$('#bottom-panel').click(function(){
+					$('#top-panel').addClass('hidden');
+					$('#bottom-panel').addClass('fullscreen');
+				}).bind('mousemove', function(e){
+					mouse.y = e.pageY;
+				}).bind('mousestop', 350, function(e){
+					//console.log('mousestop');
+					if ($('#top-panel').hasClass('hidden')) {
+						//console.log('top-panel is hidden');
+						var offset = $(this).offset();
+    					var relativeY = mouse.y - offset.top;
+    					if (offset.top < 100 && relativeY < 75) {
+    						//console.log('relativeY = ' + relativeY);
+    						$('#top-panel').removeClass('hidden').addClass('hover');
+    						$('#bottom-panel').removeClass('fullscreen');
+    					}
+    				}
+				});
+				
+				
+				$('#top-panel').mouseleave(function(){
+					//console.log('mouseleave');
+					if ($(this).hasClass('hover')) {
+						$(this).addClass('hidden').removeClass('hover');
+						$('#bottom-panel').addClass('fullscreen');
+					}
+				});
+				
+				// Arrow Click
+				$('#arrow').click(function(){
+					if (!$('#top-panel').hasClass('hover')) {
+						if ($('#top-panel').hasClass('hidden')) {
+							$('#top-panel').removeClass('hidden');
+							$('#bottom-panel').removeClass('fullscreen');
+						}
+						else {
+							$('#top-panel').addClass('hidden');
+							$('#bottom-panel').addClass('fullscreen');
+						}
+					}
+					else {
+						$('#top-panel').removeClass('hover');
+					}
+				});
+				
+				// Thumbnail Click
+				$('a.big_link').live('click', function(){
+					$('a.big_link').removeClass('selected');
+					$(this).addClass('selected');
+					if (!$('#top-panel').hasClass('keyup')) {
+						$('#top-panel').addClass('hidden');
+					}
+					$('#top-panel').removeClass('hover');
+					$('#bottom-panel').addClass('fullscreen');
+					$('#init').remove();
+					
+					var src = $(this).attr('href');
+					var img = new Image();
+					img.onload = function() {
+						if ($('#image').length == 0) {
+							$('#bottom-panel').append(
+								'<div id="image">' +
+									'<img />' +
+								'</div>'
+							);
+						}
+						resizeBottomPanel();
+						$('#image > img').attr('src', src);
+					};
+					img.src = src;
+					return false;
+				});
+				
+				$('#images > ul').jflickrfeed({
+					limit: 20,
+					feedapi: 'photoset.gne',
+					qstrings: {
+						nsid: '54085318@N05',
+						set: '72157629914203693',
+						format: 'json'
+					},
+					itemTemplate: 
+						'<li>' +
+							'<a href="{{image_b}}" class="big_link"><img src="{{image_m}}" alt="{{title}}" class="thumbnail" onload="thumbOnLoad(this);" /></a>' +
+						'</li>'
+				}, function(data) {
+					//console.log(data);
+				});
+
+			});
+		</script>
+	</body>
+</html>
